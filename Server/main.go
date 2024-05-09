@@ -1,12 +1,13 @@
 package main
 
 import (
+	"LiteSender/Common"
 	"net"
 )
 
 func main() {
 	ip := net.ParseIP(GetLocalIp())
-	server := NewServer(ip, 8899)
-	server.SetHandler(&StrHandler{})
+	conf := Common.ReadConfig()
+	server := NewServer(ip, conf.Port)
 	server.Listen()
 }
