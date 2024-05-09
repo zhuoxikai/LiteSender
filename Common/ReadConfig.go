@@ -3,12 +3,11 @@ package Common
 import (
 	"encoding/json"
 	"log"
-	"net"
 	"os"
 )
 
 type Config struct {
-	Ip   net.IP
+	Ip   string
 	Port int
 }
 
@@ -31,7 +30,7 @@ func ReadConfig() (conf *Config) {
 
 func (conf Config) DefaultConfig() *Config {
 	return &Config{
-		Ip:   net.ParseIP("127.0.0.1"),
+		Ip:   "127.0.0.1",
 		Port: 8899,
 	}
 }

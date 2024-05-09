@@ -7,10 +7,9 @@ import (
 
 func main() {
 	conf := Common.ReadConfig()
-	ip := GetLocalIp()
 
 	//创建client
-	client := NewClient(ip, conf.Port)
+	client := NewClient(conf.Ip, conf.Port)
 	if client == nil {
 		log.Fatal("连接服务器失败")
 		return
