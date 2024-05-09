@@ -54,6 +54,7 @@ func (c *Client) SendFile(conf *Common.Config) {
 func SendData(c *Client, conf *Common.Config) {
 	buf := make([]byte, 4096)
 	file, err := os.Open(conf.FilePath)
+	defer file.Close()
 	if err != nil {
 		log.Fatalf("open file fail:%s", err)
 		return
