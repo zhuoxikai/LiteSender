@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"strings"
 )
@@ -16,7 +17,7 @@ func NewServer(ip net.IP, port int) *Server {
 	server := &Server{
 		ip:      ip,
 		port:    port,
-		handler: &StrHandler{},
+		handler: &HelloHandler{},
 	}
 
 	return server
@@ -53,7 +54,7 @@ func (server *Server) Listen() {
 func GetLocalIp() (ip string) {
 	conn, err := net.Dial("udp", "8.8.8.8:53")
 	if err != nil {
-		fmt.Errorf("dial fail,err:%s", err)
+		log.Fatalf("dial fail,err:%s", err)
 		return
 	}
 
