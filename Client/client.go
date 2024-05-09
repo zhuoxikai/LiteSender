@@ -1,10 +1,12 @@
 package main
 
 import (
+	"LiteSender/Common"
 	"fmt"
+	"io"
 	"log"
 	"net"
-	"strings"
+	"os"
 	"sync"
 )
 
@@ -29,30 +31,46 @@ func NewClient(routerIp string, routerPort int) *Client {
 	return client
 }
 
-func GetLocalIp() (ip string) {
-	conn, err := net.Dial("udp", "8.8.8.8:53")
-	if err != nil {
-		log.Fatalf("dial fail,err:%s", err)
-		return
-	}
-
-	addr := conn.LocalAddr().String()
-	ip = strings.Split(addr, ":")[0]
-	return
-}
-
-func (c *Client) StartClient() {
+func (c *Client) SendFile(conf *Common.Config) {
 	defer c.conn.Close()
 	buf := make([]byte, 1024)
 
+	_, err := c.conn.Write([]byte(conf.FileName))
+	if err != nil {
+		log.Fatal("write filename error")
+	}
+
+	n, err := c.conn.Read(buf)
+	if err != nil {
+		log.Fatalf("read fail:%s", err)
+	}
+	resp := string(buf[:n])
+	log.Println("receive data from server:", resp)
+	if resp == "ready" {
+		SendData(c, conf)
+	}
+}
+
+func SendData(c *Client, conf *Common.Config) {
+	buf := make([]byte, 4096)
+	file, err := os.Open(conf.FilePath)
+	if err != nil {
+		log.Fatalf("open file fail:%s", err)
+		return
+	}
 	for {
-		c.conn.Write([]byte("Alice"))
-		for {
-			n, err := c.conn.Read(buf)
-			if err != nil {
-				log.Fatalf("read fail:%s", err)
-			}
-			log.Println("receive data:", string(buf[:n]))
+		n, err := file.Read(buf)
+		if err == io.EOF {
+			log.Println("read file done!")
+			return
+		} else if err != nil {
+			log.Fatalf("read file fail:%s", err)
+			return
+		}
+		_, err = c.conn.Write(buf[:n])
+		if err != nil {
+			log.Fatalf("connect write error:%s", err)
+			return
 		}
 	}
 }

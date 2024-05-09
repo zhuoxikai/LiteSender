@@ -7,8 +7,10 @@ import (
 )
 
 type Config struct {
-	Ip   string
-	Port int
+	Ip       string
+	Port     int
+	FilePath string
+	FileName string
 }
 
 func ReadConfig() (conf *Config) {

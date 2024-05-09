@@ -15,5 +15,5 @@ func main() {
 		return
 	}
 
-	client.StartClient()
+	client.SendFile(conf)
 }
